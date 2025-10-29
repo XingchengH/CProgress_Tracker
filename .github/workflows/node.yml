@@ -17,25 +17,61 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      # ---- Lockfile 状态输出，便于排查 ----
+      - name: Check lockfiles
+        run: |
+          test -f frontend/package-lock.json && echo "frontend lock: OK" || echo "frontend lock: MISSING"
+          test -f backend/package-lock.json && echo "backend lock: OK" || echo "backend lock: MISSING"
+
+      # ---- 若存在前端 lock，则启用带缓存的 setup-node（只缓存前端）----
+      - name: Use Node.js (cache frontend)
+        if: ${{ hashFiles('frontend/package-lock.json') != '' }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          # Disable caching at root level (no lock file there)
-          cache-dependency-path: |
-            Client/package-lock.json
-            Server/package-lock.json
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
-      # CLIENT
-      - name: Install and Build Client
-        working-directory: ./Client
-        run: |
-          npm ci
-          npm run build
+      # ---- 若存在后端 lock，则启用带缓存的 setup-node（只缓存后端）----
+      - name: Use Node.js (cache backend)
+        if: ${{ hashFiles('backend/package-lock.json') != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
 
-      # SERVER
-      - name: Install and Test Server
-        working-directory: ./Server
+      # ---- 如果两个 lock 都不存在，则至少安装 Node（无缓存）----
+      - name: Use Node.js (no cache fallback)
+        if: ${{ hashFiles('frontend/package-lock.json') == '' && hashFiles('backend/package-lock.json') == '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # ========== FRONTEND ==========
+      - name: Install Frontend deps
+        if: ${{ hashFiles('frontend/package.json') != '' }}
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Build Frontend
+        if: ${{ hashFiles('frontend/package.json') != '' }}
+        working-directory: ./frontend
+        run: npm run build
+
+      # ========== BACKEND ==========
+      - name: Install Backend deps
+        if: ${{ hashFiles('backend/package.json') != '' }}
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Build Backend
+        if: ${{ hashFiles('backend/package.json') != '' }}
+        working-directory: ./backend
+        run: npm run build
+
+      - name: Test Backend (optional)
+        if: ${{ hashFiles('backend/package.json') != '' }}
+        working-directory: ./backend
         run: |
-          npm ci
           npm test || echo "No tests configured yet"
