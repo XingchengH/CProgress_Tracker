@@ -21,21 +21,36 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          # Disable caching at root level (no lock file there)
+          cache: npm
+          # 分别缓存前后端 lock 文件（如果其中一个不存在也不会报错）
           cache-dependency-path: |
-            Client/package-lock.json
-            Server/package-lock.json
+            frontend/package-lock.json
+            backend/package-lock.json
 
-      # CLIENT
-      - name: Install and Build Client
-        working-directory: ./Client
-        run: |
-          npm ci
-          npm run build
+      # ========== FRONTEND ==========
+      - name: Install Frontend deps
+        if: ${{ hashFiles('frontend/package.json') != '' }}
+        working-directory: ./frontend
+        run: npm ci
 
-      # SERVER
-      - name: Install and Test Server
-        working-directory: ./Server
+      - name: Build Frontend
+        if: ${{ hashFiles('frontend/package.json') != '' }}
+        working-directory: ./frontend
+        run: npm run build
+
+      # ========== BACKEND ==========
+      - name: Install Backend deps
+        if: ${{ hashFiles('backend/package.json') != '' }}
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Build Backend
+        if: ${{ hashFiles('backend/package.json') != '' }}
+        working-directory: ./backend
+        run: npm run build
+
+      - name: Test Backend (optional)
+        if: ${{ hashFiles('backend/package.json') != '' }}
+        working-directory: ./backend
         run: |
-          npm ci
           npm test || echo "No tests configured yet"
