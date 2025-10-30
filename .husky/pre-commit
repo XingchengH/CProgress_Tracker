@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🔍 Running lint-staged hooks..."
+
+# 格式化前端文件
+cd frontend && npx lint-staged
+cd ..
+
+# 格式化后端文件
+cd backend && npx lint-staged
+cd ..
