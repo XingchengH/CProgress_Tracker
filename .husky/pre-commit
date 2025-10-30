@@ -1,8 +1,2 @@
-# .husky/pre-commit (新版语法)
 echo "🔍 Running lint-staged hooks..."
-
-cd frontend && npx lint-staged
-cd ..
-
-cd backend && npx lint-staged
-cd ..
+npx --no-install lint-staged
