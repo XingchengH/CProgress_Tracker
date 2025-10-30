@@ -1,0 +1,30 @@
+{
+  "private": true,
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.3.3"
+  },
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "frontend/**/*.{ts,tsx,js,jsx}": [
+      "frontend/node_modules/.bin/eslint --fix",
+      "prettier --write"
+    ],
+    "backend/**/*.{ts,js}": [
+      "backend/node_modules/.bin/eslint --fix",
+      "prettier --write"
+    ],
+    "frontend/**/*.{css,scss,html}": [
+      "prettier --write"
+    ],
+    "backend/**/*.{css,scss,html}": [
+      "prettier --write"
+    ],
+    "*.{md,json,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}

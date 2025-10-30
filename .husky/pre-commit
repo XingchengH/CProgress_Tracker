@@ -1,0 +1,2 @@
+echo "🔍 Running lint-staged hooks..."
+npx --no-install lint-staged
