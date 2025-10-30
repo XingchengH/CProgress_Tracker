@@ -37,5 +37,8 @@
     "*.{ts,js,md,json,yml,yaml}": [
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "zod": "^4.1.12"
   }
 }
