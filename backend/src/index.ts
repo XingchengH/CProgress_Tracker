@@ -14,6 +14,6 @@ app.get('/health', (_req, res) => {
 app.use('/api/v1/users', users);
 
 // 404 兜底
-app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
+app.use((_req, res) => res.status(404).json({ error: 'Not found 404' }));
 
 app.listen(env.PORT, () => {});
