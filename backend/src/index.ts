@@ -16,6 +16,4 @@ app.use('/api/v1/users', users);
 // 404 兜底
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
 
-app.listen(env.PORT, () => {
-  console.log(`API listening on http://localhost:${env.PORT}`);
-});
+app.listen(env.PORT, () => {});
