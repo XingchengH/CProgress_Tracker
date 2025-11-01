@@ -3,6 +3,7 @@ import users from './routes/users';
 import { env } from './lib/env';
 import dotenv from 'dotenv';
 import { connectDB } from './lib/db';
+import mongoose from 'mongoose';
 
 const app = express();
 dotenv.config();
@@ -25,4 +26,10 @@ const PORT = env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT} in ${env.NODE_ENV} mode`);
   connectDB();
+});
+
+process.on('SIGINT', async () => {
+  await mongoose.connection.close();
+  console.log('MongoDB connection closed');
+  process.exit(0);
 });
