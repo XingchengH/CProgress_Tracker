@@ -5,7 +5,7 @@ import { env } from './lib/env';
 import { connectDB } from './lib/db';
 
 import users from './routes/users';
-import authRoutes from './routes/auth.route.ts';
+import authRoutes from './routes/auth.route';
 
 dotenv.config();
 const app = express();
