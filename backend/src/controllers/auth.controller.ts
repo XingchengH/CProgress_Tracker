@@ -22,7 +22,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       user: { id: newUser._id, username: newUser.username, email: newUser.email },
     });
   } catch (error) {
-    console.error(error);
+    console.error('Unexpected error:', (error as Error).message);
     res.status(500).json({ error: (error as Error).message });
   }
 };
@@ -44,7 +44,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const token = generateToken(user._id.toString());
+    const token = generateToken(String(user._id));
 
     res.status(200).json({
       message: 'Login successful',
@@ -52,7 +52,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       token,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Unexpected error:', (error as Error).message);
     res.status(500).json({ error: (error as Error).message });
   }
 };
