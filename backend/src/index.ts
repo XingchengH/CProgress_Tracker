@@ -1,14 +1,16 @@
 import express from 'express';
-import users from './routes/users';
-import { env } from './lib/env';
-import dotenv from 'dotenv';
-import { connectDB } from './lib/db';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import { env } from './lib/env';
+import { connectDB } from './lib/db';
 
-const app = express();
+import users from './routes/users';
+import authRoutes from './routes/auth.route.ts';
+
 dotenv.config();
-
+const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Health check
 app.get('/health', (_req, res) => {
@@ -17,6 +19,7 @@ app.get('/health', (_req, res) => {
 
 // API
 app.use('/api/v1/users', users);
+app.use('/api/v1/auth', authRoutes);
 
 // 404 兜底
 app.use((_req, res) => res.status(404).json({ error: 'Not found 404' }));
