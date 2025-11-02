@@ -22,7 +22,7 @@ app.use('/api/v1/users', users);
 app.use('/api/v1/auth', authRoutes);
 
 // 404 兜底
-app.use((_req, res) => res.status(404).json({ error: 'Not found 404' }));
+app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
 
 const PORT = env.PORT || 3000;
 
